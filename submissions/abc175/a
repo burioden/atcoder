@@ -1,0 +1,7 @@
+s = input()
+ans = s.count("R")
+
+if ans > 1 and s[1] == "S":
+  ans -= 1
+
+print(ans if ans >= 0 else 0)

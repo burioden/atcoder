@@ -1,0 +1,8 @@
+s,t = input().split()
+n,m = map(int,input().split())
+u = input()
+
+if s==u:
+  print(n-1,m)
+else:
+  print(n,m-1)

@@ -1,0 +1,14 @@
+n,m = map(int,input().split())
+
+graph = [[0]*n for _ in range(n)]
+
+for i in range(m):
+  li = list(map(int,input().split()))
+  for j in range(1,li[0]+1):
+    for l in range(j+1,li[0]+1):
+      graph[li[j]-1][li[l]-1] = 1
+      graph[li[l]-1][li[j]-1] = 1
+
+ans = sum([sum(i == 0 for i in a)for a in graph])
+
+print("Yes" if ans == n else "No")

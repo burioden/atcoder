@@ -1,0 +1,9 @@
+a = int(input())
+b = int(input())
+
+la = [a,b]
+lt = [1,2,3]
+
+ans = list(set(la)^set(lt))
+
+print(''.join(map(str, ans)))

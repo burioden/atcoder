@@ -1,0 +1,6 @@
+a = input()
+
+if ord(a) < 96:
+  print("A")
+else:
+  print("a")

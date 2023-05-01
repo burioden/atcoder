@@ -1,0 +1,4 @@
+import math
+n = int(input())
+n /= 100
+print(math.ceil(n))

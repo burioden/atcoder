@@ -1,0 +1,16 @@
+a,b = input().split()
+
+ansa = 0
+ansb = 0
+
+for i in range(3):
+  ansa += int(a[i])
+
+for i in range(3):
+  ansb += int(b[i])
+
+
+if ansa >= ansb:
+  print(ansa)
+else:
+  print(ansb)

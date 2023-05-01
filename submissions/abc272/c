@@ -1,0 +1,29 @@
+n = int(input())
+a = sorted(list(map(int,input().split())))[::-1]
+
+max_even = 0
+max_odd = 0
+
+cnt_even = 1
+cnt_odd = 1
+i = 0
+
+while cnt_even <= 2 and cnt_odd <= 2 and i < n:
+  if a[i]%2 == 0:
+    max_even += a[i]
+    cnt_even += 1
+    i += 1
+  elif a[i]%2 == 1:
+    max_odd += a[i]
+    cnt_odd += 1
+    i += 1
+  else:
+    break
+
+
+ans = max(max_even,max_odd)
+
+if ans%2 == 0:
+  print(ans)
+else:
+  print("-1")

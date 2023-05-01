@@ -1,0 +1,6 @@
+a,b = map(int,input().split())
+
+if len(str(a)) == 1 and len(str(b)) == 1:
+  print(a*b)
+else:
+  print(-1)

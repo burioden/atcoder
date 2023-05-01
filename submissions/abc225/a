@@ -1,0 +1,8 @@
+s = input()
+
+if len(set(s))==3:
+  print(6)
+elif len(set(s))==2:
+  print(3)
+else:
+  print(1)

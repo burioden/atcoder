@@ -1,0 +1,8 @@
+n = int(input())
+
+if n >= 42:
+  print("AGC"+"0"+str(n+1))
+elif len(str(n))==1:
+  print("AGC"+"00"+str(n))
+else:
+  print("AGC"+"0"+str(n))

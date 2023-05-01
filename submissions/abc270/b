@@ -1,0 +1,21 @@
+goal,wall,hammer = map(int, input().split())
+
+# 壁の位置が負なら全体を反転
+if wall < 0:
+  wall = -wall
+  goal = -goal
+  hammer = -hammer
+
+ans = 0
+
+if goal < wall:
+  ans = abs(goal)
+else:
+  if 0 < hammer < wall:
+    ans = abs(goal)
+  elif hammer < 0:
+    ans = abs(goal) + abs(hammer*2)
+  else:
+    ans = -1
+
+print(ans)
