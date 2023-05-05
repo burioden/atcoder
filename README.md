@@ -1,2 +1,4 @@
 # atcoder
-AtCoderの提出
+AtCoderのAC提出
+
+submissionsにAC提出が詰まっている

@@ -1,9 +1,27 @@
+'''
+
+直したいところ（こういうのにIssueを使うのか？）
+・最新AC提出をv3のAPIでもとってこれるようにしたい
+・AC以外の提出もまとめたい。いずれ「あっぷそるぶしろよ」通知botとかを作りたい…
+
+** Special thanks!! **
+
+https://zenn.dev/tishii2479/articles/6b381fb86e0369
+をもとにした
+
+いまいさん (https://twitter.com/imaimai17468) がわかんないところ答えてくれた
+
+'''
+
+
 import requests
 import json
 
 userID = "burioden" # 自分のAtCoderのユーザーIDを設定する
 unix_second = 0
-api_path = "https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=" + userID + "&from_second=" + str(unix_second)
+# api_path = "https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=" + userID + "&from_second=" + str(unix_second)
+# 旧APIだと正常に動く。なぜ
+api_path = "https://kenkoooo.com/atcoder/atcoder-api/results?user=burioden"
 
 # APIを用いた提出データの取得
 def getSubmissionData():
@@ -66,10 +84,14 @@ for submissions in newestSubmits.values():
         
         # 作成するファイルへのパス
         path = root + sub["contest_id"] + "/" + problem_num
-        # 拡張子の設定（C++, Pythonのみ）
+        # 拡張子の設定
         if "C++" in sub["language"]:
             path += ".cpp"
-        elif "Python" in sub["language"]:
+        elif "JavaScript" in sub["language"]:
+            path += ".js"
+        elif "Dart" in sub["language"]:
+            path += ".dart"
+        else: #PythonとPyPyに対して.pyをつける
             path += ".py"
         
         # 既に提出コードがある場合は取得せず、次の問題の提出を探す
