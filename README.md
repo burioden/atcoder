@@ -13,4 +13,4 @@ submissionsにAC提出が詰まっている
 https://zenn.dev/tishii2479/articles/6b381fb86e0369
 をもとにした
 
-いまいさん (https://twitter.com/imaimai17468) がわかんないところ答えてくれた
+[いまいさん](https://twitter.com/imaimai17468) がわかんないところ答えてくれた
