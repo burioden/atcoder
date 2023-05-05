@@ -1,9 +1,11 @@
-n,k = map(int, input().split())
+n,k = map(int,input().split())
 
 for i in range(k):
   if n%200 == 0:
-    n = n//200
+    n //= 200
   else:
-    n = int(str(n)+str(200))
+    x = str(n)
+    y = x+'200'
+    n = int(y)
 
 print(n)

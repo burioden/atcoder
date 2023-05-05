@@ -1,6 +1,9 @@
 s = sorted(input())
+n = len(set(s))
+a = s[0]
+b = s[-1]
 
-print(
-  "Yes"
-  if s[0]==s[1] and s[2]==s[3] and s[0]!=s[3]
-  else "No")
+if s.count(a) == 2 and s.count(b) == 2 and n == 2:
+  print('Yes')
+else:
+  print('No')

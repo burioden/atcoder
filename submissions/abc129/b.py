@@ -1,15 +1,10 @@
 n = int(input())
-li = list(map(int, input().split()))
+w = list(map(int,input().split()))
 
+ans = 101*101
 for i in range(1,n):
-  li[i] += li[i-1]
-
-ans = 100000
-
-for t in range(n):
-  s1 = li[t]
-  s2 = li[n-1] - s1
-  if abs(s1 - s2) < ans:
-    ans = abs(s1 - s2)
-
+  x = sum(w[0:i])
+  y = sum(w[i:n])
+  ans = min(ans,abs(x-y))
+  
 print(ans)

@@ -2,7 +2,11 @@
 using namespace std;
 
 int main() {
-    int R, G;
-    cin >> R >> G;
-    cout << 2 * G - R << endl;
+    int r, g;
+    cin >> r;
+    cin >> g;
+
+    int ans = g + (g - r);
+
+    cout << ans << endl;
 }

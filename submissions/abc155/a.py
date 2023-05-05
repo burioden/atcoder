@@ -1,6 +1,6 @@
-li = sorted(list(map(int, input().split())))
+a = set(list(map(int, input().split())))
 
-if 2 == (len(set(li))):
-  print("Yes")
+if len(a) == 2:
+  print('Yes')
 else:
-  print("No")
+  print('No')

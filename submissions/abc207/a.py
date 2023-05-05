@@ -1,2 +1,3 @@
-li = sorted(list(map(int, input().split())))
-print(li[1]+li[2])
+a = sorted(list(map(int,input().split())))
+
+print(a[1]+a[2])

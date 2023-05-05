@@ -1,8 +1,7 @@
-a,op,b = input().split()
-a = int(a)
-b = int(b)
+a = list(input().split())
+a[0],a[2] = int(a[0]),int(a[2])
 
-if op=="+":
-  print(a+b)
-if op=="-":
-  print(a-b)
+if a[1] == "+":
+  print(a[0]+a[2])
+else:
+  print(a[0]-a[2])

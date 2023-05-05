@@ -1,4 +1,5 @@
-a,b,c = map(int, input().split())
-ans = c-(a-b)
+a, b, c = map(int, input().split())
 
-print(0 if ans < 0 else ans)
+ans = c -  (a - b)
+
+print(max(0, ans))

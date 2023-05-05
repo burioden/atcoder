@@ -1,27 +1,34 @@
-n, a, b = map(int, input().split())
+n,a,b = map(int, input().split())
 
-countH = n*a
-countW = n*b
+g = []
+c = []
+for i in range(n):
+  inner = []
+  if i % 2 == 0:
+    for j in range(b):
+      inner.append('.')
+  elif i % 2 == 1:
+    for j in range(b):
+      inner.append('#')
+  g.append(inner)
+  
+for i in range(n):
+  inner = []
+  if i % 2 == 0:
+    for j in range(b):
+      inner.append('#')
+  elif i % 2 == 1:
+    for j in range(b):
+      inner.append('.')
+  c.append(inner)
+  
+G = sum(g, [])
+C = sum(c, [])
 
-o_li = []
-e_li = []
-
-while countW >= b:
-    countW -= b
-    o_li.append("."*b)
-    e_li.append("#"*b)
-    if n >= 2 and countW >= b:
-        countW -= b
-        o_li.append("#"*b)
-        e_li.append("."*b)
-
-while countH >= a:
-    for i in range(a):
-        print("".join(map(str, o_li)))
-    countH -= a
-    if countH >= 1:
-        for l in range(a):
-            print("".join(map(str, e_li)))
-        countH -= a
-    else:
-        break
+for i in range(n):
+  if i % 2 == 0:
+    for j in range(a):
+      print(*G,sep='')
+  else:
+    for j in range(a):
+      print(*C,sep='')

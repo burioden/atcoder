@@ -1,6 +1,8 @@
-a,b = map(int, input().split())
+a, b = sorted(map(int, input().split()))
 
-if a%2 != b%2:
-  print("IMPOSSIBLE")
+p = abs(a - b) // 2
+
+if a + p == b - p:
+  print(a + p)
 else:
-  print(max(a,b)-abs(a-b)//2)
+  print('IMPOSSIBLE')

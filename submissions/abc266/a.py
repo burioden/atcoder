@@ -1,4 +1,4 @@
 s = input()
-n = len(s)
+n = len(s)//2
 
-print(s[n//2])
+print(s[n])

@@ -1,6 +1,6 @@
-n,k = map(int, input().split())
-s = input()
+n, k = map(int, input().split())
+s = list(input())
 
-ans = s[:k-1] + (s[k-1]).swapcase() + s[k:]
+s[k - 1] = s[k - 1].lower()
 
-print(ans)
+print(*s, sep='')

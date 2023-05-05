@@ -1,4 +1,3 @@
-li = list(map(int,input().split()))
-nl = sorted(li)
+p, w, r = sorted(map(int, input().split()))
 
-print(nl[0]+nl[1])
+print(p + w)

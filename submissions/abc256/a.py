@@ -1,3 +1,3 @@
 n = int(input())
 
-print(pow(2,n))
+print(2**n)

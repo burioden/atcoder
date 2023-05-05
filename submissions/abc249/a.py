@@ -1,19 +1,21 @@
 a,b,c,d,e,f,x = map(int, input().split())
 
-ta = 0
-ao = 0
+takahashi = 0
+aoki = 0
 
-# どうして「time%(a+c) < a」で、進んでる秒数が判定できるのかわからない
-# time = 0,1,2...x秒 という認識が間違っている？？
-for time in range(x):
-  if time%(a+c) < a:
-    ta += b
-  if time%(d+f) < d:
-    ao += e
-
-if ta > ao:
-  print("Takahashi")
-elif ta < ao:
-  print("Aoki")
+for i in range(1,x+1):
+  if i%(a+c) <= a and i%(a+c) != 0:
+    takahashi += b
+  elif i%(a+c) > a and i%(a+c) == 0:
+    takahashi += 0
+  if i%(d+f) <= d and i%(d+f) != 0:
+    aoki += e
+  elif i%(d+f) > d and i%(d+f) == 0:
+    aoki += 0
+    
+if takahashi > aoki:
+  print('Takahashi')
+elif takahashi < aoki:
+  print('Aoki')
 else:
-  print("Draw")
+  print('Draw')

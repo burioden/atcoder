@@ -1,13 +1,14 @@
-list = list(map(int, input().split()))
+a,b,c,d,e = map(int, input().split())
 
-c1 = list.count(list[0])
-c2 = list.count(list[1])
-c3 = list.count(list[2])
-c4 = list.count(list[3])
-c5 = list.count(list[4])
+g = sorted([a,b,c,d,e])
 
-if c1 == 3 or c2 == 3 or c3 == 3 or c4 == 3 or c5 == 3:
-	if c1 == 2 or c2 == 2 or c3 == 2 or c4 == 2 or c5 == 2:
-		print("Yes")
-	else:print("No")
-else:print("No")
+flg = 0
+
+if g[0] == g[1] == g[2]:
+  if g[3] == g[4]:
+    flg = 1
+elif g[0] == g[1]:
+  if g[2] == g[3] == g[4]:
+    flg = 1
+
+print('Yes' if flg else 'No')

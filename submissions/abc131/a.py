@@ -1,9 +1,6 @@
 s = input()
 
-flag = 1
-
-for i in range(3):
-  if s[i] == s[i+1]:
-    flag = 0
-
-print("Good" if flag else "Bad")
+if s[0] == s[1] or s[1] == s[2] or s[2] == s[3]:
+  print('Bad')
+else:
+  print('Good')

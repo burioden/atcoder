@@ -1,19 +1,21 @@
-n,w = map(int, input().split())
-a = sorted(list(map(int, input().split())))
+n, w = map(int, input().split())
+a = list(map(int, input().split()))
 
-ans = []
+good = set()
 
-for i in a:
-  if i <= w:
-    ans.append(i)
+for i in range(n):
+  if a[i] <= w:
+        good.add(a[i])
 
-if a[0] < w:
-  for i in range(n):
-    for l in range(i+1,n):
-      if ans[i] + ans[l] <= w:
-          ans.append(ans[i] + ans[l])
-      for k in range(l+1,n):
-        if ans[i] + ans[l] + ans[k] <= w:
-          ans.append(ans[i] + ans[l] + ans[k])
-
-print(len(set(ans)))
+for i in range(n):
+  for j in range(i + 1, n):
+    if a[i] + a[j] <= w:
+      good.add(a[i] + a[j])
+      
+for i in range(n):
+  for j in range(i + 1, n):
+    for k in range(j + 1, n):
+      if a[i] + a[j] + a[k] <= w:
+        good.add(a[i] + a[j] + a[k])
+        
+print(len(good))

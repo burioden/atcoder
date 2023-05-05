@@ -1,12 +1,5 @@
 s = input()
+tenki = ["Sunny", "Cloudy", "Rainy"]
+x = (tenki.index(s) + 1) % 3
 
-ans = ""
-
-if s == "Rainy":
-  ans = "Sunny"
-elif s == "Cloudy":
-  ans = "Rainy"
-else:
-  ans = "Cloudy"
-
-print(ans)
+print(tenki[x])

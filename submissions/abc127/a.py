@@ -1,10 +1,8 @@
-a,b = map(int, input().split())
+a, b = map(int, input().split())
 
 if a < 6:
-  ans = 0
-elif a < 13:
-  ans = b//2
+  print(0)
+elif 6 <= a < 13:
+  print(b // 2)
 else:
-  ans = b
-
-print(ans)
+  print(b)

@@ -1,6 +1,4 @@
-s = sorted(input())
-ss = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+s = set(list(input()))
+t = set(list('0123456789'))
 
-ans = set(s) ^ set(ss)
-
-print(" ".join(map(str, ans)))
+print(*s ^ t)

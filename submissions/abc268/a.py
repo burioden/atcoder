@@ -1,3 +1,3 @@
-s = input().split()
+a = list(map(int,input().split()))
 
-print(len(set(s)))
+print(len(set(a)))

@@ -1,12 +1,6 @@
-n, q = map(int, input().split())
-L = []
-for i in range(n):
-    list = input().split()
-    L.append(list)
-Q = []
-for i in range(q):
-    a, b = map(int, input().split())
-    Q.append([a, b])
+n,q = map(int,input().split())
+a = [list(map(int, input().split())) for _ in range(n)]
+s = [list(map(int, input().split())) for _ in range(q)]
 
 for i in range(q):
-    print(L[Q[i][0]-1][Q[i][1]])
+  print(a[s[i][0]-1][s[i][1]])

@@ -1,10 +1,10 @@
-y = int(input())
+n = int(input())
 
-if y%4==0:
-	print(y+2)
-elif y%4==1:
-	print(y+1)
-elif y%4==2:
-	print(y)
-elif y%4==3:
-	print(y+3)
+if (n+2) % 4 == 0:
+  print(n)
+elif (n+2) % 4 == 1:
+    print(n+3)
+elif (n+2) % 4 == 2:
+    print(n+2)
+else:
+    print(n+1)

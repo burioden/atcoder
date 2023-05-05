@@ -1,8 +1,9 @@
 k = int(input())
 
-hh = round(k//60)+21
+h = str(21 + (k//60))
 m = str(k%60)
 
-mm = m.zfill(2)
-
-print(str(hh) + ":" + mm)
+if len(m) == 1:
+  m = '0'+m
+  
+print(h,':',m,sep="")

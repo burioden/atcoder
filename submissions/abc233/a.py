@@ -1,6 +1,9 @@
-x,y = map(int, input().split())
-ans = int(((y-x) + (10-1)) / 10)
+x,y = map(int,input().split())
+
 if x < y:
-  print(ans)
+  if (y-x)%10 != 0:
+    print(((y-x)//10)+1)
+  else:
+    print((y-x)//10)
 else:
   print(0)

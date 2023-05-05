@@ -1,14 +1,13 @@
 n = int(input())
-li = list(map(int, input().split()))
+a = sorted(list(map(int,input().split())))[::-1]
 
-li2 = sorted(li)
+alice = 0
+bob = 0
 
-a = 0
-b = 0
+for i in range(n):
+  if i%2 == 0:
+    alice += a[i]
+  else:
+    bob += a[i]
 
-for i in range(0,len(li2),2):
-  a += li2[i]
-for i in range(1,len(li2),2):
-  b += li2[i]
-
-print(abs(a-b))
+print(abs(alice-bob))

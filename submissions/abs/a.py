@@ -1,6 +1,5 @@
-a,b = map(int, input().split())
+a = int(input())
+b,c = map(int, input().split())
+s = (input())
 
-if (a*b)%2 == 0:
-    print("Even")
-else:
-    print("Odd")
+print(a+b+c, s)
