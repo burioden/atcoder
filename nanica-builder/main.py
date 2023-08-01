@@ -1,9 +1,30 @@
+'''
+やりたいこと：
+
+ABC
+・どのばちゃを立てる？ -> abc
+・def abc()を実行
+・開始日は？ -> 08-07（次の週の月曜日を入れる。ここは頑張る）
+・そこから5日分のひる・よるをfor文で回し、1つずつインターバル挟んでAPIを発信する
+
+ARC / AGC
+・どのばちゃを立てる？ -> argc
+・def argc()を実行
+・開始日は？ -> 08-07（次の週の月曜日を入れる。ここは頑張る）
+・そこから5日分のひる・よるをfor文で回し、1つずつインターバル挟んでAPIを発信する
+・weekdayが0(月), 2(水), 4(金)の場合はarcを、1(火), 3(木)の場合はagcをセット
+
+って、これは一つにしても良いのですが…
+
+'''
+
+
+
 import datetime
 import sqlite3
 import random
 import re
 import requests
-
 import config
 
 dbname = config.dbname
@@ -14,24 +35,28 @@ c = conn.cursor()
 print('どのバチャをたてる？')
 contest_type = input()
 
-if contest_type == 'abc':
+if contest_type == 'abc': # configのabc設定から
     contest_sets = config.contest_sets_abc
-elif contest_type == 'arc':
+elif contest_type == 'arc': # configのarc設定から
     contest_sets = config.contest_sets_arc
-elif contest_type == 'agc':
+elif contest_type == 'agc': # configのagc設定から
     contest_sets = config.contest_sets_agc
 else:
     print('打ち間違いだよ')
     exit(0)
 
+# configに指定されてるname（ABCなにかDまで！の部分）
 contest_names = [contest_set['name'] for contest_set in contest_sets]
 
+# contestのセットが空か
 if len(contest_names) == 0:
     print('contest_setsが空だな')
     exit(0)
 
+# contest_setの最初を入れておく（選んだコンテストの昼が入る）
 contest = contest_sets[0]
 
+# 昼か夜かを選ばせる
 if len(contest_names) > 1:
     print('バチャを作成したい時間帯を選んでね(おひる: 0, よる: 1)')
     for i, contest_name in enumerate(contest_names):
@@ -42,6 +67,7 @@ if len(contest_names) > 1:
         contest_index = int(input('番号を入力してね: '))
     contest = contest_sets[contest_index]
 
+# これなんだ？
 c.execute('CREATE TABLE IF NOT EXISTS contest_info (name TEXT PRIMARY KEY, next_start_date DATE)')
 c.execute('CREATE TABLE IF NOT EXISTS past_problems (contest_name TEXT, date DATE, problem_id TEXT)')
 
@@ -66,7 +92,7 @@ else:
 problem_infos = contest['problem_infos']
 problem_json = requests.get('https://kenkoooo.com/atcoder/resources/problem-models.json').json()
 
-# 問題セット部分
+# 問題セットを絞り込んでいる？？
 problems = []
 for i, problem_info in enumerate(problem_infos):
     candidate_problem_ids = []
@@ -90,31 +116,34 @@ for i, problem_info in enumerate(problem_infos):
     if len(candidate_problem_ids) == 0:
         print('候補問題がないなあ')
         exit(0)
-    # problem_id = candidate_problem_ids[random.randint(0, len(candidate_problem_ids) - 1)]
     
     
-    # 問題の数
-    if contest_type == 'abc':
+    # 問題の数などを設定
+    if contest_type == 'abc': # 126〜300まで
         problem_id = f'abc{str(random.randint(126, 300))}_'
         problem_type = ['a', 'b', 'c', 'd']
-    elif contest_type == 'arc':
+    elif contest_type == 'arc': # 104〜158まで
         problem_id = f'arc{str(random.randint(104, 158))}_'
         problem_type = ['a', 'b', 'c']
     else:
-        problem_id = f'agc0{str(random.randint(10, 60))}_'
+        x = random.randint(10, 60) # 10〜60まで
+        if x >= 48: # 048は欠番なので、それ以降は+1 つまり本当は61まで
+            x += 1
+        problem_id = f'agc0{str(x)}_' 
         problem_type = ['a', 'b']
-    
     
     for d in problem_type:
         problems.append({
             'id': problem_id + d,
-            'point': problem_info['point'],
-            'order': i
+            'point': 1, # 配点
+            'order': i # なんだこれは
         })
 
+# 開始日時
 start_dt = datetime.datetime.strptime(date + ' ' + contest['everyday_start_time'], '%Y-%m-%d %H:%M')
 
-token = '(トークンを記入している)'
+# tokenの設定
+token = 'xxxxxxxxxxxxxxxx'
 
 headers = {
     'Content-Type': 'application/json',
@@ -133,21 +162,25 @@ r = requests.post('https://kenkoooo.com/atcoder/internal-api/contest/create', he
 })
 if r.status_code != 200:
     print('コンテストの作成に失敗した…')
-    print(r.status_code)
     exit(0)
 contest_id = r.json()['contest_id']
 print('コンテストを作成したよ！: https://kenkoooo.com/atcoder/#/contest/show/' + contest_id)
 
 
 # 通知ツート生成
+# ABCひる / よる ・ ARGCひる / よる で、ファイルを分けている
+
+# アイコンと、生成先のテキストの名前
+icon = ""
+text_name = ""
 
 if contest_type == 'abc':
     icon = '🍰'
     text_name = 'tweet_list_abc_'
 elif contest_type == 'arc':
     icon = '🍘'
-    text_name = 'argc_'
-elif contest_type == 'tweet_list_argc':
+    text_name = 'tweet_list_argc_'
+elif contest_type == 'agc':
     icon = '🌶'
     text_name = 'tweet_list_argc_'
 
@@ -158,6 +191,7 @@ else:
     contest_time = 'よる'
     text_name += 'night.txt'
 
+# 日付と、曜日
 day = start_dt.weekday()
 day_of_week = {0: '(月)', 1: '(火)', 2: '(水)', 3: '(木)', 4: '(金)'}
 
@@ -175,6 +209,7 @@ f.write(f'{icon}今日の{contest_time}のぶん！' + '\n')
 f.write('https://kenkoooo.com/atcoder/#/contest/show/' + contest_id + '\n\n')
 f.close()
 
+# ここでリクエストを飛ばしているの？154行めはなんだ？？
 r = requests.post('https://kenkoooo.com/atcoder/internal-api/contest/item/update', headers=headers, json={
     'contest_id': contest_id,
     'problems': problems
