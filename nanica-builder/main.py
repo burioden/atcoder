@@ -43,7 +43,7 @@ elif contest_type == 'agc': # configのagc設定から
     contest_sets = config.contest_sets_agc
 else:
     print('打ち間違いだよ')
-    exit(0)
+    exit(1)
 
 # configに指定されてるname（ABCなにかDまで！の部分）
 contest_names = [contest_set['name'] for contest_set in contest_sets]
@@ -51,7 +51,7 @@ contest_names = [contest_set['name'] for contest_set in contest_sets]
 # contestのセットが空か
 if len(contest_names) == 0:
     print('contest_setsが空だな')
-    exit(0)
+    exit(1)
 
 # contest_setの最初を入れておく（選んだコンテストの昼が入る）
 contest = contest_sets[0]
@@ -115,7 +115,7 @@ for i, problem_info in enumerate(problem_infos):
         candidate_problem_ids.append(problem_id)
     if len(candidate_problem_ids) == 0:
         print('候補問題がないなあ')
-        exit(0)
+        exit(1)
     
     
     # 問題の数などを設定
@@ -162,7 +162,7 @@ r = requests.post('https://kenkoooo.com/atcoder/internal-api/contest/create', he
 })
 if r.status_code != 200:
     print('コンテストの作成に失敗した…')
-    exit(0)
+    exit(1)
 contest_id = r.json()['contest_id']
 print('コンテストを作成したよ！: https://kenkoooo.com/atcoder/#/contest/show/' + contest_id)
 
@@ -216,7 +216,7 @@ r = requests.post('https://kenkoooo.com/atcoder/internal-api/contest/item/update
 })
 if r.status_code != 200:
     print('コンテストの問題を設定できんかった')
-    exit(0)
+    exit(1)
 print('コンテストの問題を設定したよ')
 
 for problem in problems:
