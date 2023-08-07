@@ -10,11 +10,13 @@ problem_info:
  include_experimental:？
  duplicate_remove_days:(指定した期間)過去に同じ問題が出ていたら除くという設定
 '''
+from datetime import time
 
 
 DAYNIGHT_EMOJI = ["☀️", "🌙"]
 CONTEST_EMOJI = {"b": "🍰", "r": "🍘", "g": "🌶"}
 PROBLEM_MAX = {"b": "D", "r": "C", "g": "B"}
+START_TIME = {"b": [time(hour=14), time(hour=21)], "r": [time(hour=15), time(hour=22)], "g": [time(hour=15), time(hour=22)]}
 DURATION_SECOND = {"b": 2100, "r": 3300, "g": 3300}
 START_NUM = {"b": "126", "r": "104", "g": "001"}
 LATEST_NUM = {"b": "10", "r": "2", "g": "2"}
