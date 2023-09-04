@@ -46,7 +46,7 @@ c = conn.cursor()
 
 # 次の月曜を探す
 monday = datetime.date.today() + datetime.timedelta(days=1)
-while day.weekday():
+while monday.weekday():
     monday += datetime.timedelta(days=1)
 
 print(f'来週分({monday.month}月{monday.day}日～)のバチャをすべて自動でたてるよ')
@@ -94,7 +94,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
         contest_range = set(range(104, 159))
         problem_type = ['a', 'b', 'c']
     else:
-        contest_range = set(range(10, 47)) | set(range(49, 61)) 
+        contest_range = set(range(10, 48)) | set(range(49, 61)) 
         problem_type = ['a', 'b']
 
     problems = []
@@ -110,6 +110,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
             continue
         difficulty = max(0, problem_json[problem_id]['difficulty'])
         if difficulty < difficulty_range[0] or difficulty > difficulty_range[1]:
+            # 問題が難しすぎる/易しすぎる
             continue
         is_experimental = problem_json[problem_id]['is_experimental']
         if not include_experimental and is_experimental:
@@ -118,7 +119,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
             'SELECT * FROM past_problems WHERE contest_name = ? AND date >= date(?, ?) AND problem_id = ?',
             (contest_info['name'], date, '-%d days' % problem_info['duplicate_remove_days'], problem_id)
         )
-        if c.fetchone() is not None:
+        if c.fetchone():
             # 過去60日以内にバチャに出した問題は出さない
             continue
         candidate_problem_ids[problem_id.split("_")[1]].append(problem_id)
@@ -170,7 +171,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
         icon = '🌶'
         text_name = 'tweet_list_argc_'
 
-    if contest_index == 0:
+    if day_or_night == 0:
         contest_time = 'おひる'
         text_name += 'day.txt'
     else:
