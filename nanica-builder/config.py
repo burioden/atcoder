@@ -12,7 +12,7 @@ problem_info:
 '''
 from datetime import time
 
-
+DB_NAME = 'problems.sqlite3'
 DAYNIGHT_EMOJI = ["☀️", "🌙"]
 CONTEST_EMOJI = {"b": "🍰", "r": "🍘", "g": "🌶"}
 PROBLEM_MAX = {"b": "D", "r": "C", "g": "B"}
