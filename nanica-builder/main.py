@@ -22,7 +22,6 @@ ARC / AGC
 import datetime
 import sqlite3
 import random
-import re
 import requests
 import time
 import config
@@ -39,7 +38,7 @@ headers = {
 
 
 # データベースの準備
-dbname = config.dbname
+dbname = config.DB_NAME
 
 conn = sqlite3.connect(dbname)
 c = conn.cursor()
@@ -71,6 +70,16 @@ c.execute('CREATE TABLE IF NOT EXISTS contest_info (name TEXT PRIMARY KEY, next_
 c.execute('CREATE TABLE IF NOT EXISTS past_problems (contest_name TEXT, date DATE, problem_id TEXT)')
 
 problem_json = requests.get('https://kenkoooo.com/atcoder/resources/problem-models.json').json()
+
+
+# 一覧生成
+for text_name in ("abc_day", "argc_day", "abc_night", "argc_night"):
+    with open("tweet_list_"+text_name+".txt", 'w', encoding="utf-8") as f:
+        pass
+
+# 通知個別ツイート生成
+with open('tweet.txt', 'w', encoding="utf-8") as f:
+    pass
 
 
 def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: str):
@@ -106,7 +115,9 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
             continue
         if not 'difficulty' in problem_json[problem_id]:
             continue
-        if int(ploblem_id[3:].split("_")[0]) not in contest_range:
+        if int(problem_id[3:].split("_")[0]) not in contest_range:
+            continue
+        if problem_id.split("_")[1] not in problem_type:
             continue
         difficulty = max(0, problem_json[problem_id]['difficulty'])
         if difficulty < difficulty_range[0] or difficulty > difficulty_range[1]:
@@ -139,7 +150,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
 
     # コンテスト生成
     r = requests.post('https://kenkoooo.com/atcoder/internal-api/contest/create', headers=headers, json={
-        'title': start_dt.strftime(contest_info['title']),
+        'title': contest_info['title'],
         'memo': contest_info['memo'],
         'start_epoch_second': int(start_dt.timestamp()),
         'duration_second': contest_info['duration_second'],
@@ -185,7 +196,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
 
     # 通知個別ツイート生成
     with open('tweet.txt', 'a', encoding="utf-8") as f:
-        f.write(problem_id + '\n' + str(day)[8:10] + day_of_week[day.weekday()] + '\n')
+        f.write(str(day)[8:10] + day_of_week[day.weekday()] + '\n')
         f.write(f'{icon}今日の{contest_time}のぶん！' + '\n')
         f.write('https://kenkoooo.com/atcoder/#/contest/show/' + contest_id + '\n\n')
 
@@ -200,7 +211,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
     print('コンテストの問題を設定したよ')
 
     for problem in problems:
-        c.execute('INSERT INTO past_problems VALUES (?, ?, ?)', (contest['name'], date, problem['id']))
+        c.execute('INSERT INTO past_problems VALUES (?, ?, ?)', (contest_info['name'], date, problem['id']))
     c.execute("INSERT INTO contest_info VALUES (?, ?)", (f"{contest_type}_{day_or_night}_{date}", date))
 
 
