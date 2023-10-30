@@ -147,8 +147,8 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
     })
     if r.status_code != 200:
         print('コンテストの作成に失敗した…')
-        # exit(1)
-    contest_id = "aaaw" # r.json()['contest_id']
+        exit(1)
+    contest_id = r.json()['contest_id']
     print('作成したよ！: https://kenkoooo.com/atcoder/#/contest/show/' + contest_id)
 
 
@@ -189,7 +189,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
     })
     if r.status_code != 200:
         print('コンテストの問題を設定できんかった')
-        #exit(1)
+        exit(1)
     print('コンテストの問題を設定したよ')
 
     # 今回の問題情報をデータベースに保存する
