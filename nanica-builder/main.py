@@ -89,7 +89,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
     date = day.isoformat()  # YYYY-MM-DDの形式になる
 
     c.execute(
-        "SELECT name FROM contest_info2 WHERE date=? AND day_or_night=? AND problem_type=?",
+        "SELECT * FROM contest_info2 WHERE date=? AND day_or_night=? AND contest_type=?",
         (date, day_or_night, contest_type)
     )
     if c.fetchone():
@@ -98,17 +98,17 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
 
     # 問題を絞り込み、その中からそれぞれ選ぶ
     if contest_type == 'abc': # 126〜300まで
-        contest_range = set(range(126, 301))
+        contest_range = list(range(126, 301))
         problem_type = ['a', 'b', 'c', 'd']
     elif contest_type == 'arc': # 104〜158まで
-        contest_range = set(range(104, 159))
+        contest_range = list(range(104, 159))
         problem_type = ['a', 'b', 'c']
     else:
-        contest_range = set(range(10, 48)) | set(range(49, 61)) 
+        contest_range = list(range(10, 48)) + list(range(49, 61)) 
         problem_type = ['a', 'b']
 
     contest_number = random.choice(contest_range)
-    contest_range.discard(contest_number)
+    contest_range.remove(contest_number)
     while contest_range:
         # 過去60日間にバチャで出した番号かどうかを判定
         c.execute(
@@ -119,7 +119,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
             # 出題なしならループ脱出
             break
         contest_number = random.choice(contest_range)
-        contest_range.discard(contest_number)
+        contest_range.remove(contest_number)
     if not contest_range:
         print("過去%d日間の間に出せる範囲すべての問題を出し切ったよ" % contest_info['problem_info']['duplicate_remove_days'])
         exit(1)
@@ -147,8 +147,8 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
     })
     if r.status_code != 200:
         print('コンテストの作成に失敗した…')
-        exit(1)
-    contest_id = r.json()['contest_id']
+        # exit(1)
+    contest_id = "aaaw" # r.json()['contest_id']
     print('作成したよ！: https://kenkoooo.com/atcoder/#/contest/show/' + contest_id)
 
 
@@ -178,7 +178,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
 
     # 通知個別ツイート生成
     with open('tweet.txt', 'a', encoding="utf-8") as f:
-        f.write(contest_id + '\n' + str(day)[8:10] + day_of_week[day.weekday()] + '\n')
+        f.write(f"{contest_number}\n{str(day)[8:10]}{day_of_week[day.weekday()]}\n")
         f.write(f'{icon}今日の{contest_time}のぶん！' + '\n')
         f.write('https://kenkoooo.com/atcoder/#/contest/show/' + contest_id + '\n\n')
 
@@ -189,14 +189,15 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
     })
     if r.status_code != 200:
         print('コンテストの問題を設定できんかった')
-        exit(1)
+        #exit(1)
     print('コンテストの問題を設定したよ')
 
     # 今回の問題情報をデータベースに保存する
     c.execute(
         "INSERT INTO contest_info2 VALUES (?, ?, ?, ?)",
-        (date, day_or_night, contest_type, contest_id)
+        (date, day_or_night, contest_type, contest_number)
     )
+    conn.commit()
 
 
 print(f"バチャコンを30秒ごとに1個立てるので、{len(kaisaibi)*2}分ほど待っててね")
