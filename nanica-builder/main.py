@@ -66,18 +66,17 @@ if not kaisaibi:
     exit(1)
 
 # データベースに今まで立てたなにかバチャの情報を記録できるようにする
-c.execute('CREATE TABLE IF NOT EXISTS contest_info (name TEXT PRIMARY KEY, next_start_date DATE)')
-c.execute('CREATE TABLE IF NOT EXISTS past_problems (contest_name TEXT, date DATE, problem_id TEXT)')
+c.execute('CREATE TABLE IF NOT EXISTS contest_info2 (date DATE, day_or_night INT, contest_type TEXT, contest_id INT)')
 
-problem_json = requests.get('https://kenkoooo.com/atcoder/resources/problem-models.json').json()
+# PROBLEM_JSON = requests.get('https://kenkoooo.com/atcoder/resources/problem-models.json').json()
 
 
-# 一覧生成
+# 一覧生成 (初期化)
 for text_name in ("abc_day", "argc_day", "abc_night", "argc_night"):
     with open("tweet_list_"+text_name+".txt", 'w', encoding="utf-8") as f:
         pass
 
-# 通知個別ツイート生成
+# 通知個別ツイート生成 (初期化)
 with open('tweet.txt', 'w', encoding="utf-8") as f:
     pass
 
@@ -86,63 +85,51 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
     # バチャコンを立てる
     print(f"{day.month}月{day.day}日{day_of_week[day.weekday()]}{'よ' if day_or_night else 'ひ'}る A{contest_type.upper()}Cなにか を立てるよ")
     contest_info = config.get_contest_info(contest_type, day_or_night)
-    problem_info = contest_info['problem_info']
     contest_type = f"a{contest_type}c"
     date = day.isoformat()  # YYYY-MM-DDの形式になる
 
-    c.execute("SELECT name FROM contest_info WHERE name=?", (f"{contest_type}_{day_or_night}_{date}",))
+    c.execute(
+        "SELECT * FROM contest_info2 WHERE date=? AND day_or_night=? AND contest_type=?",
+        (date, day_or_night, contest_type)
+    )
     if c.fetchone():
         print("同じ日、同じ時間帯、同じ内容のコンテストがすでにあったよ")
         return
 
     # 問題を絞り込み、その中からそれぞれ選ぶ
     if contest_type == 'abc': # 126〜300まで
-        contest_range = set(range(126, 301))
+        contest_range = list(range(126, 301))
         problem_type = ['a', 'b', 'c', 'd']
     elif contest_type == 'arc': # 104〜158まで
-        contest_range = set(range(104, 159))
+        contest_range = list(range(104, 159))
         problem_type = ['a', 'b', 'c']
     else:
-        contest_range = set(range(10, 48)) | set(range(49, 61)) 
+        contest_range = list(range(10, 48)) + list(range(49, 61)) 
         problem_type = ['a', 'b']
 
-    problems = []
-    candidate_problem_ids = {n: [] for n in problem_type}
-    difficulty_range = problem_info['difficulty_range']
-    include_experimental = problem_info['include_experimental']
-    for problem_id in problem_json.keys():
-        if not contest_type in problem_id:
-            continue
-        if not 'difficulty' in problem_json[problem_id]:
-            continue
-        if int(problem_id[3:].split("_")[0]) not in contest_range:
-            continue
-        if problem_id.split("_")[1] not in problem_type:
-            continue
-        difficulty = max(0, problem_json[problem_id]['difficulty'])
-        if difficulty < difficulty_range[0] or difficulty > difficulty_range[1]:
-            # 問題が難しすぎる/易しすぎる
-            continue
-        is_experimental = problem_json[problem_id]['is_experimental']
-        if not include_experimental and is_experimental:
-            continue
+    contest_number = random.choice(contest_range)
+    contest_range.remove(contest_number)
+    while contest_range:
+        # 過去60日間にバチャで出した番号かどうかを判定
         c.execute(
-            'SELECT * FROM past_problems WHERE contest_name = ? AND date >= date(?, ?) AND problem_id = ?',
-            (contest_info['name'], date, '-%d days' % problem_info['duplicate_remove_days'], problem_id)
+            'SELECT * FROM contest_info2 WHERE contest_type = ? AND date >= date(?, ?) AND contest_id = ?',
+            (contest_type, date, '-%d days' % contest_info['problem_info']['duplicate_remove_days'], contest_number)
         )
-        if c.fetchone():
-            # 過去60日以内にバチャに出した問題は出さない
-            continue
-        candidate_problem_ids[problem_id.split("_")[1]].append(problem_id)
+        if not c.fetchone():
+            # 出題なしならループ脱出
+            break
+        contest_number = random.choice(contest_range)
+        contest_range.remove(contest_number)
+    if not contest_range:
+        print("過去%d日間の間に出せる範囲すべての問題を出し切ったよ" % contest_info['problem_info']['duplicate_remove_days'])
+        exit(1)
 
+    problems = []
     for d in problem_type:
-        if len(candidate_problem_ids[d]) == 0:
-            print(f'{d}の候補問題がないなあ')
-            exit(1)
         problems.append({
-            'id': random.choice(candidate_problem_ids[d]),
+            'id': f"{contest_type}{contest_number}_{d}",
             'point': 1, # 配点
-            'order': 0 # なんだこれは
+            'order': 0 # 問題の順番
         })
 
     # 開始日時
@@ -169,18 +156,13 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
     # ABCひる / よる ・ ARGCひる / よる で、ファイルを分けている
 
     # アイコンと、生成先のテキストの名前
-    icon = ""
-    text_name = ""
+    icon = config.CONTEST_EMOJI[contest_type[1]]
+    text_name = "tweet_list_a{}c_"
 
     if contest_type == 'abc':
-        icon = '🍰'
-        text_name = 'tweet_list_abc_'
-    elif contest_type == 'arc':
-        icon = '🍘'
-        text_name = 'tweet_list_argc_'
-    elif contest_type == 'agc':
-        icon = '🌶'
-        text_name = 'tweet_list_argc_'
+        text_name = text_name.format("b")
+    else:
+        text_name = text_name.format("rg")
 
     if day_or_night == 0:
         contest_time = 'おひる'
@@ -196,7 +178,7 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
 
     # 通知個別ツイート生成
     with open('tweet.txt', 'a', encoding="utf-8") as f:
-        f.write(str(day)[8:10] + day_of_week[day.weekday()] + '\n')
+        f.write(f"{contest_number}\n{str(day)[8:10]}{day_of_week[day.weekday()]}\n")
         f.write(f'{icon}今日の{contest_time}のぶん！' + '\n')
         f.write('https://kenkoooo.com/atcoder/#/contest/show/' + contest_id + '\n\n')
 
@@ -210,9 +192,12 @@ def create_virtual_contest(day: datetime.date, day_or_night: int, contest_type: 
         exit(1)
     print('コンテストの問題を設定したよ')
 
-    for problem in problems:
-        c.execute('INSERT INTO past_problems VALUES (?, ?, ?)', (contest_info['name'], date, problem['id']))
-    c.execute("INSERT INTO contest_info VALUES (?, ?)", (f"{contest_type}_{day_or_night}_{date}", date))
+    # 今回の問題情報をデータベースに保存する
+    c.execute(
+        "INSERT INTO contest_info2 VALUES (?, ?, ?, ?)",
+        (date, day_or_night, contest_type, contest_number)
+    )
+    conn.commit()
 
 
 print(f"バチャコンを30秒ごとに1個立てるので、{len(kaisaibi)*2}分ほど待っててね")
